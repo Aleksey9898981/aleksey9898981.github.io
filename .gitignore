@@ -1,0 +1,5 @@
+# Приватное — НИКОГДА не публикуется
+_plany/
+*.md.bak
+.DS_Store
+Thumbs.db

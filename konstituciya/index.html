@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0d1117">
+<meta name="description" content="Личная конституция — паспорт для любой нейросети. Ответь на вопросы о себе, скопируй паспорт, вставь в ИИ — и она начнёт отвечать тебе, а не «человеку вообще».">
+<title>Личная конституция — паспорт для любой нейросети</title>
+<style>
+  :root{
+    --bg:#0d1117; --card:#1c2128; --card2:#22272e;
+    --border:#30363d; --text:#e6edf3; --muted:#8b949e;
+    --accent:#d97757; --accent2:#58a6ff; --green:#3fb950; --gold:#f5b83d; --red:#f85149;
+    --panel-h:64px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    background:var(--bg);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+    line-height:1.6;font-size:16px;
+    padding-bottom:calc(var(--panel-h) + env(safe-area-inset-bottom) + 12px);
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:20px 16px 40px}
+
+  /* ---------- шапка ---------- */
+  header{padding:26px 0 22px;border-bottom:1px solid var(--border);margin-bottom:22px}
+  .tag{display:inline-block;background:rgba(217,119,87,.12);color:var(--accent);
+    border:1px solid rgba(217,119,87,.4);border-radius:20px;padding:3px 14px;
+    font-size:12.5px;font-weight:600;margin-bottom:14px}
+  h1{font-size:27px;line-height:1.22;margin-bottom:12px;letter-spacing:-.3px}
+  h1 em{color:var(--accent);font-style:normal}
+  .lead{color:var(--muted);font-size:15.5px;max-width:640px}
+
+  /* ---------- карточки ---------- */
+  .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin-bottom:14px}
+  .howto{background:rgba(88,166,255,.06);border-color:rgba(88,166,255,.28)}
+  .howto h3{font-size:15px;color:var(--accent2);margin-bottom:10px}
+  .howto ol{margin:0 0 0 18px;font-size:14.5px;color:var(--muted)}
+  .howto ol li{padding:3px 0}
+  .howto ol li b{color:var(--text)}
+  .privacy{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;color:var(--muted);
+    background:rgba(63,185,80,.07);border:1px solid rgba(63,185,80,.28);
+    border-radius:12px;padding:12px 15px;margin-bottom:20px}
+  .privacy b{color:var(--green)}
+  .privacy .ico{flex-shrink:0;font-size:16px;line-height:1.35}
+
+  /* ---------- сетка ---------- */
+  .grid{display:block}
+  @media(min-width:980px){
+    .grid{display:grid;grid-template-columns:1fr 400px;gap:26px;align-items:start}
+    .side{position:sticky;top:20px}
+    body{padding-bottom:40px}
+    .mobilepanel{display:none!important}
+  }
+
+  /* ---------- блоки вопросов ---------- */
+  .block{margin-bottom:26px}
+  .bhead{display:flex;align-items:center;gap:9px;margin-bottom:4px;flex-wrap:wrap}
+  .bnum{background:var(--accent);color:#fff;border-radius:8px;min-width:28px;height:28px;
+    display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+  .bhead h2{font-size:18.5px;letter-spacing:-.2px}
+  .qmark{width:22px;height:22px;border-radius:50%;border:1px solid var(--border);
+    background:var(--card2);color:var(--muted);font-size:12.5px;font-weight:700;
+    display:inline-flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+  .qmark:hover,.qmark[aria-expanded="true"]{border-color:var(--accent);color:var(--accent)}
+  .hint{display:none;font-size:13.5px;color:var(--muted);background:var(--card2);
+    border-left:2px solid var(--accent);border-radius:0 8px 8px 0;padding:10px 14px;margin:8px 0 12px}
+  .hint.open{display:block}
+
+  .q{background:var(--card);border:1px solid var(--border);border-radius:12px;
+    padding:13px 15px 14px;margin-bottom:10px;transition:border-color .18s}
+  .q.filled{border-color:rgba(217,119,87,.45)}
+  .q label{display:block;font-size:15px;font-weight:600;margin-bottom:8px;line-height:1.4}
+  .q .n{color:var(--accent);font-weight:700;margin-right:5px}
+  textarea{width:100%;background:var(--bg);color:var(--text);border:1px solid var(--border);
+    border-radius:9px;padding:11px 12px;font:inherit;font-size:15.5px;line-height:1.5;
+    resize:none;overflow:hidden;min-height:52px}
+  textarea:focus{outline:none;border-color:var(--accent)}
+  textarea::placeholder{color:#5d6672}
+
+  /* ---------- паспорт ---------- */
+  .passport h3{font-size:15px;margin-bottom:3px;display:flex;align-items:center;gap:8px}
+  .counter{background:linear-gradient(135deg,rgba(217,119,87,.14),rgba(217,119,87,.05));
+    border:1px solid rgba(217,119,87,.4);border-radius:12px;padding:14px 16px;margin-bottom:12px;text-align:center}
+  .counter .num{font-size:38px;font-weight:800;color:var(--accent);line-height:1;
+    display:block;transition:transform .16s}
+  .counter .num.pop{transform:scale(1.16)}
+  .counter .lbl{font-size:13px;color:var(--muted);margin-top:5px;display:block}
+  .bar{height:6px;background:var(--card2);border-radius:99px;overflow:hidden;margin-top:11px}
+  .bar i{display:block;height:100%;width:0;background:var(--accent);border-radius:99px;transition:width .3s}
+  .ptext{background:var(--bg);border:1px solid var(--border);border-radius:10px;
+    padding:12px 13px;font-size:12.5px;line-height:1.55;color:var(--muted);
+    max-height:320px;overflow-y:auto;white-space:pre-wrap;word-break:break-word;
+    font-family:ui-monospace,'SF Mono',Consolas,monospace}
+  .ptext.empty{color:#5d6672;font-style:italic;font-family:inherit}
+
+  /* ---------- кнопки ---------- */
+  .btn{display:block;width:100%;border:none;border-radius:11px;padding:14px 16px;
+    font:inherit;font-size:15.5px;font-weight:700;cursor:pointer;margin-top:10px;
+    transition:transform .1s,filter .15s;text-align:center}
+  .btn:active{transform:scale(.985)}
+  .btn.primary{background:var(--accent);color:#fff;font-size:16.5px;padding:16px}
+  .btn.primary:hover{filter:brightness(1.08)}
+  .btn.ghost{background:var(--card2);color:var(--text);border:1px solid var(--border);
+    font-size:14px;font-weight:600;padding:11px}
+  .btn.ghost:hover{border-color:var(--muted)}
+  .btn.danger{background:transparent;color:var(--red);border:1px solid rgba(248,81,73,.35);
+    font-size:13.5px;font-weight:600;padding:10px}
+  .btn.ok{background:var(--green)!important;color:#fff!important}
+  .btnrow{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .btnrow .btn{margin-top:8px}
+
+  /* ---------- нижняя панель (мобилка) ---------- */
+  .mobilepanel{position:fixed;left:0;right:0;bottom:0;z-index:40;
+    background:rgba(22,27,34,.97);backdrop-filter:blur(10px);
+    border-top:1px solid var(--border);padding:10px 14px calc(10px + env(safe-area-inset-bottom));
+    display:flex;align-items:center;gap:12px;transition:transform .22s}
+  .mobilepanel.hide{transform:translateY(120%)}
+  .mobilepanel .mnum{font-size:24px;font-weight:800;color:var(--accent);line-height:1}
+  .mobilepanel .mlbl{font-size:11.5px;color:var(--muted);line-height:1.3}
+  .mobilepanel .mbtn{margin-left:auto;background:var(--accent);color:#fff;border:none;
+    border-radius:10px;padding:12px 18px;font:inherit;font-size:14.5px;font-weight:700;cursor:pointer;white-space:nowrap}
+
+  /* ---------- модалка паспорта (мобилка) ---------- */
+  .sheet{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.6);display:none}
+  .sheet.open{display:block}
+  .sheet .inner{position:absolute;left:0;right:0;bottom:0;max-height:88vh;overflow-y:auto;
+    background:var(--card);border-radius:18px 18px 0 0;padding:18px 16px calc(24px + env(safe-area-inset-bottom))}
+  .sheet .grab{width:38px;height:4px;background:var(--border);border-radius:99px;margin:0 auto 14px}
+
+  /* ---------- проверка до/после ---------- */
+  .check{background:rgba(245,184,61,.06);border:1px solid rgba(245,184,61,.3);border-radius:14px;
+    padding:16px 18px;margin:26px 0 14px}
+  .check h3{font-size:16px;color:var(--gold);margin-bottom:8px}
+  .check p{font-size:14.5px;color:var(--muted);margin-bottom:10px}
+  .check .qq{background:var(--bg);border:1px solid var(--border);border-radius:10px;
+    padding:11px 13px;font-size:14.5px;margin-bottom:8px}
+
+  .whatsnew{font-size:13.5px;color:var(--muted)}
+  .whatsnew b{color:var(--text)}
+
+  footer{margin-top:34px;padding-top:18px;border-top:1px solid var(--border);
+    color:var(--muted);font-size:13px;line-height:1.7}
+  footer b{color:var(--text)}
+  footer a{color:var(--accent);text-decoration:none}
+  .ver{display:inline-block;background:var(--card2);border:1px solid var(--border);
+    border-radius:6px;padding:1px 9px;font-size:11.5px;color:var(--muted);margin-left:4px}
+
+  .toast{position:fixed;left:50%;transform:translateX(-50%) translateY(120px);
+    bottom:calc(var(--panel-h) + 26px);background:var(--green);color:#fff;
+    padding:12px 22px;border-radius:99px;font-size:15px;font-weight:700;z-index:99;
+    transition:transform .26s;box-shadow:0 6px 24px rgba(0,0,0,.4);pointer-events:none}
+  .toast.show{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="tag">📜 Инструмент №1 · Библиотека Баталова</div>
+  <h1>Нейросеть даёт тебе слабые советы, потому что <em>она тебя не знает</em></h1>
+  <p class="lead">Ответь на вопросы о себе — справа соберётся твой паспорт. Скопируй его, вставь в начало разговора с любой нейросетью — и она перестанет отвечать «человеку вообще» и начнёт отвечать тебе. Один раз собрал — пользуешься всегда.</p>
+</header>
+
+<div class="card howto">
+  <h3>Как этим пользоваться — три шага</h3>
+  <ol>
+    <li><b>Отвечай своими словами.</b> Не старайся красиво, пиши как думаешь. Можно пропускать вопросы — паспорт соберётся из того, что есть.</li>
+    <li><b>Нажми «Скопировать для нейросети»</b> внизу, когда надоест отвечать. Хоть на пятом вопросе.</li>
+    <li><b>Вставь в чат</b> с Claude, ChatGPT, Gemini, Алисой или GigaChat — первым сообщением. Дальше спрашивай что угодно.</li>
+    <li><b>Не хочешь вставлять каждый раз</b> — загляни в настройки своей нейросети: «О себе», «Персонализация», «Память» или «Проект». Вставил туда один раз — работает в каждом новом разговоре.</li>
+  </ol>
+</div>
+
+<div class="privacy">
+  <span class="ico">🔒</span>
+  <span><b>Данные живут в этом браузере на этом устройстве и никуда не отправляются.</b> Ни мне, ни кому-либо ещё — здесь нет сервера. Закроешь страницу — ответы сохранятся только у тебя, откроешь снова — продолжишь. Внизу есть кнопки «Резервная копия» и «Стереть всё».<br><br>
+  <b style="color:var(--gold)">Но помни:</b> всё, что ты сюда написал, уедет в ту нейросеть, куда ты вставишь паспорт. Пароли, номера карт и чужие тайны сюда не пиши.</span>
+</div>
+
+<div class="grid">
+
+  <!-- ======= ЛЕВАЯ КОЛОНКА: АНКЕТА ======= -->
+  <main id="form"></main>
+
+  <!-- ======= ПРАВАЯ КОЛОНКА: ПАСПОРТ ======= -->
+  <aside class="side">
+    <div class="card passport">
+      <div class="counter">
+        <span class="num" id="cnt">0</span>
+        <span class="lbl" id="cntLbl">фактов о тебе пока нет</span>
+        <div class="bar"><i id="bar"></i></div>
+      </div>
+      <h3>Твой паспорт</h3>
+      <div class="ptext empty" id="ptext">Начни отвечать — паспорт будет собираться здесь сам.</div>
+      <button class="btn primary" id="copyMain">Скопировать для нейросети</button>
+      <div class="btnrow">
+        <button class="btn ghost" id="copyPass">Скопировать паспорт</button>
+        <button class="btn ghost" id="backup">Резервная копия</button>
+      </div>
+      <button class="btn danger" id="wipe">Стереть всё</button>
+    </div>
+  </aside>
+</div>
+
+<!-- ======= ПРОВЕРЬ РАЗНИЦУ ======= -->
+<div class="check">
+  <h3>Проверь разницу за одну минуту</h3>
+  <p>Задай нейросети этот вопрос <b>до</b> того, как вставишь паспорт, и <b>после</b>. Разница будет видна сразу:</p>
+  <div class="qq" id="testQ">Посоветуй, чем мне заняться в ближайшие выходные и как провести их с пользой.</div>
+  <button class="btn ghost" id="copyTest" style="max-width:260px">Скопировать вопрос</button>
+</div>
+
+<div class="card">
+  <p class="whatsnew"><b>Что нового в v1.0:</b> первая версия — одна анкета и одна кнопка. <b>Известный недостаток:</b> пока нельзя держать два паспорта отдельно — рабочий и домашний. Знаю. Мешает — напиши, починю в следующей версии.<br><br>
+  Дальше достраиваем вместе: один попросит — запишу, трое попросят — сделаю и покажу ваш комментарий в ролике.</p>
+</div>
+
+<footer>
+  Собрал с нейросетью за вечер. Я не программист.<br>
+  <b>Библиотека инструментов</b> → <a href="https://t.me/batalovproai" id="tgLink">@batalovproai</a> · Своё дело? Напиши мне в телеграм слово <b>АУДИТ</b><br>
+  Личная конституция <span class="ver">v1.0 · 26.07.2026</span>
+</footer>
+
+</div><!-- /wrap -->
+
+<!-- нижняя панель для телефона -->
+<div class="mobilepanel" id="mpanel">
+  <div>
+    <div class="mnum" id="mcnt">0</div>
+    <div class="mlbl">фактов<br>о тебе</div>
+  </div>
+  <button class="mbtn" id="mopen">Мой паспорт</button>
+</div>
+
+<!-- шторка с паспортом для телефона -->
+<div class="sheet" id="sheet">
+  <div class="inner">
+    <div class="grab"></div>
+    <div class="counter">
+      <span class="num" id="cnt2">0</span>
+      <span class="lbl">фактов знает о тебе нейросеть</span>
+    </div>
+    <div class="ptext empty" id="ptext2">Начни отвечать — паспорт соберётся сам.</div>
+    <button class="btn primary" id="copyMain2">Скопировать для нейросети</button>
+    <div class="btnrow">
+      <button class="btn ghost" id="copyPass2">Скопировать паспорт</button>
+      <button class="btn ghost" id="backup2">Резервная копия</button>
+    </div>
+    <button class="btn ghost" id="closeSheet">Закрыть</button>
+  </div>
+</div>
+
+<div class="toast" id="toast">Скопировано ✓</div>
+
+<script>
+(function(){
+'use strict';
+
+/* ===== настройки бренда (менять здесь) ===== */
+var TG_NAME = '@batalovproai';
+var TG_URL  = 'https://t.me/batalovproai';
+var STORE   = 'batalov_konstituciya_v1';   // ключ хранения — НИКОГДА не переименовывать
+
+/* ===== анкета ===== */
+var BLOCKS = [
+  { title:'Кто ты', ptitle:'КТО Я',
+    hint:'Самое базовое. Без этого нейросеть разговаривает с «человеком вообще»: советует школьнику то, что подходит пенсионеру, и наоборот.',
+    qs:[
+      {k:'name',  l:'Имя и возраст', q:'Как тебя зовут и сколько тебе лет?', ph:'Ирина, 34 года'},
+      {k:'city',  l:'Город и с кем живу', q:'В каком городе живёшь и с кем?', ph:'Казань. Муж и сын-школьник'},
+      {k:'work',  l:'Чем занимаюсь', q:'Чем занимаешься? Работа, своё дело, учёба, декрет',  ph:'Бухгалтер в найме, плюс веду двух ИП по вечерам'},
+      {k:'about', l:'Что важно знать обо мне', q:'Что о тебе важно знать, чтобы советы попадали в цель?', ph:'Я не технарь. Объясняй словами, а не терминами. Всё новое даётся тяжело, но если разберусь — делаю до конца'}
+    ]},
+  { title:'Как с тобой разговаривать', ptitle:'КАК СО МНОЙ РАЗГОВАРИВАТЬ',
+    hint:'Половина раздражения от нейросетей идёт из этого блока. Скажешь один раз здесь — не придётся повторять в каждом разговоре.',
+    qs:[
+      {k:'style',  l:'Длина ответов', q:'Тебе как удобнее: коротко и по делу или подробно с объяснениями?', ph:'Коротко. Если тема сложная — можно подробнее, но без воды'},
+      {k:'hate',   l:'Что меня бесит в ответах', q:'Что тебя бесит в ответах нейросетей?', ph:'Когда извиняется, льёт воду и выдаёт список из десяти пунктов, где восемь лишние'},
+      {k:'address',l:'Обращение', q:'Обращаться на «ты» или на «вы»?', ph:'На ты, по имени'},
+      {k:'honest', l:'Когда не уверена в ответе', q:'Если нейросеть не уверена в ответе — честно сказать «не знаю» или дать лучшую догадку?', ph:'Честно говори, где не уверена. Ложная уверенность хуже незнания'},
+      {k:'example',l:'Примеры или сразу суть', q:'Нужны примеры и сравнения или сразу суть?', ph:'Сначала суть, потом один короткий пример'}
+    ]},
+  { title:'Твоя жизнь сейчас', ptitle:'МОЯ ЖИЗНЬ СЕЙЧАС',
+    hint:'Обстоятельства, чтобы советы были выполнимыми. Именно из-за пропуска этого блока нейросеть предлагает «наймите помощника» человеку, который считает каждую тысячу.',
+    qs:[
+      {k:'money', l:'Деньги', q:'Как у тебя с деньгами? Свободно, считаешь каждый рубль, есть долги?', ph:'Свободных денег почти нет, есть кредит. Не предлагай варианты, где надо сразу платить'},
+      {k:'time',  l:'Сколько у меня времени', q:'Сколько свободного времени в день реально есть?', ph:'Часа полтора вечером, и то не каждый день'},
+      {k:'limits',l:'Ограничения и здоровье', q:'Здоровье или ограничения, которые надо учитывать?', ph:'Спина. Долго сидеть не могу, нужны перерывы'},
+      {k:'drain', l:'Что забирает силы', q:'Что сейчас забирает больше всего сил?', ph:'Работа, которая не нравится, и постоянная нехватка денег'},
+      {k:'people',l:'Кто рядом', q:'Кто рядом? Семья, партнёры, команда — или всё сам?', ph:'Всё сама. Муж поддерживает, но в дела не вникает'}
+    ]},
+  { title:'Куда ты идёшь', ptitle:'КУДА Я ИДУ',
+    hint:'Цели нужны, чтобы советы вели куда надо. Нейросеть с этим блоком начинает замечать, когда ты уходишь в сторону от своего же плана.',
+    qs:[
+      {k:'goal1',  l:'Главная цель на год', q:'Главная цель на ближайший год — своими словами', ph:'Уйти из найма и жить со своего дела. Или хотя бы выйти на такие же деньги'},
+      {k:'goal3',  l:'Что изменить за три месяца', q:'Что должно измениться в ближайшие три месяца?', ph:'Найти первых пятерых клиентов и понять, готовы ли платить'},
+      {k:'values', l:'Ради чего всё это', q:'Что для тебя важнее всего? Ради чего всё это', ph:'Семья. Хочу быть рядом с сыном, а не приходить домой выжатой'},
+      {k:'never',  l:'Мои красные линии', q:'Чего ты точно не хочешь? Красные линии', ph:'Не хочу продавать людям то, что им не нужно. И не хочу работы без выходных'},
+      {k:'tried',  l:'Что уже пробовал и не сработало', q:'Что ты уже пробовал, и не сработало?', ph:'Пробовала вести блог — забросила через месяц, не хватило системности'}
+    ]},
+  { title:'Как ты работаешь', ptitle:'КАК Я РАБОТАЮ',
+    hint:'Чтобы нейросеть подстроилась под тебя, а не ты под неё. Здесь же скажи, что она должна делать сама, без напоминаний.',
+    qs:[
+      {k:'strong', l:'Что получается лучше всего', q:'Что у тебя получается лучше, чем у большинства?', ph:'Разбираться в сложном и объяснять просто. Легко схожусь с людьми'},
+      {k:'weak',   l:'Что даётся тяжело', q:'А что даётся тяжело?', ph:'Плохо довожу до конца. Начинаю много, заканчиваю мало'},
+      {k:'decide', l:'Как принимаю решения', q:'Как принимаешь решения: быстро на ощущениях или долго взвешиваешь?', ph:'Быстро, потом жалею. Тормози меня, если вижу, что гоню'},
+      {k:'tools',  l:'Чем пользуюсь каждый день', q:'Чем пользуешься каждый день? Программы, сервисы, техника', ph:'Телефон, Телеграм, ноутбук. Таблицы в Экселе'},
+      {k:'known',  l:'В чём мне не надо объяснять с нуля', q:'В чём ты уже разбираешься? Что тебе не нужно объяснять с азов', ph:'Таблицы и цифры — хорошо, налоги знаю. А всё, что про сайты и рекламу, — с нуля'},
+      {k:'rules',  l:'Что делать без напоминаний', q:'Что нейросеть должна делать сама, без напоминаний?', ph:'Напоминать про мою цель, если я ухожу в сторону. И честно говорить, когда идея так себе'}
+    ]}
+];
+
+/* ===== состояние ===== */
+var data = {};
+try { data = JSON.parse(localStorage.getItem(STORE) || '{}') || {}; } catch(e){ data = {}; }
+
+var $ = function(id){ return document.getElementById(id); };
+
+/* ===== рисуем анкету ===== */
+(function render(){
+  var host = $('form'), n = 0, html = '';
+  BLOCKS.forEach(function(b, bi){
+    html += '<section class="block">';
+    html += '<div class="bhead"><span class="bnum">' + (bi+1) + '</span><h2>' + b.title + '</h2>';
+    html += '<button class="qmark" type="button" data-hint="h'+bi+'" aria-expanded="false" title="Зачем это">?</button></div>';
+    html += '<div class="hint" id="h'+bi+'">' + b.hint + '</div>';
+    b.qs.forEach(function(item){
+      n++;
+      var val = data[item.k] || '';
+      html += '<div class="q' + (val.trim() ? ' filled' : '') + '" id="q_' + item.k + '">' +
+              '<label for="i_' + item.k + '"><span class="n">' + n + '.</span>' + item.q + '</label>' +
+              '<textarea id="i_' + item.k + '" data-k="' + item.k + '" rows="1" placeholder="' +
+              item.ph.replace(/"/g,'&quot;') + '"></textarea></div>';
+    });
+    html += '</section>';
+  });
+  host.innerHTML = html;
+
+  // значения + автовысота
+  BLOCKS.forEach(function(b){ b.qs.forEach(function(item){
+    var ta = $('i_' + item.k);
+    ta.value = data[item.k] || '';
+    grow(ta);
+    ta.addEventListener('input', onInput);
+    ta.addEventListener('focus', function(){ $('mpanel').classList.add('hide'); });
+    ta.addEventListener('blur',  function(){ setTimeout(function(){ $('mpanel').classList.remove('hide'); }, 120); });
+  });});
+
+  // подсказки
+  Array.prototype.forEach.call(document.querySelectorAll('.qmark'), function(btn){
+    btn.addEventListener('click', function(){
+      var el = $(btn.getAttribute('data-hint'));
+      var open = el.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  });
+})();
+
+function grow(ta){ ta.style.height = 'auto'; ta.style.height = (ta.scrollHeight + 2) + 'px'; }
+
+var saveTimer = null;
+function onInput(e){
+  var ta = e.target, k = ta.getAttribute('data-k');
+  data[k] = ta.value;
+  grow(ta);
+  $('q_' + k).classList.toggle('filled', !!ta.value.trim());
+  update();
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(save, 400);
+}
+
+function save(){
+  try { localStorage.setItem(STORE, JSON.stringify(data)); } catch(e){}
+}
+
+/* ===== счёт фактов ===== */
+function countFacts(){
+  var f = 0;
+  BLOCKS.forEach(function(b){ b.qs.forEach(function(item){
+    var v = (data[item.k] || '').trim();
+    if (!v) return;
+    f += 1;                       // ответ = факт
+    if (v.length > 80) f += 1;    // развёрнутый ответ = два
+  });});
+  return f;
+}
+function totalQ(){ var t = 0; BLOCKS.forEach(function(b){ t += b.qs.length; }); return t; }
+function answered(){ var a = 0; BLOCKS.forEach(function(b){ b.qs.forEach(function(i){ if((data[i.k]||'').trim()) a++; });}); return a; }
+
+/* ===== сборка текстов ===== */
+function buildPassport(){          // компактный блок для других инструментов
+  var out = ['[ПАСПОРТ v1]'];
+  BLOCKS.forEach(function(b){ b.qs.forEach(function(item){
+    var v = (data[item.k] || '').trim();
+    if (v) out.push(item.k + ': ' + v.replace(/\s*\n+\s*/g, ' '));
+  });});
+  out.push('[/ПАСПОРТ]');
+  return out.join('\n');
+}
+
+function today(){
+  var d = new Date();
+  return ('0'+d.getDate()).slice(-2) + '.' + ('0'+(d.getMonth()+1)).slice(-2) + '.' + d.getFullYear();
+}
+
+function buildForAI(){             // полный текст для вставки в нейросеть
+  if (answered() === 0) return '';
+  var t = [];
+  t.push('Это контекст обо мне (собран в «Личной конституции», ' + TG_NAME + '). Прочитай его перед тем, как отвечать, и учитывай во всём нашем разговоре. Не переспрашивай то, что здесь уже написано.');
+  t.push('');
+  BLOCKS.forEach(function(b){
+    var rows = [];
+    b.qs.forEach(function(item){
+      var v = (data[item.k] || '').trim();
+      if (v) rows.push('— ' + item.l + ': ' + v);
+    });
+    if (rows.length){
+      t.push(b.ptitle);
+      t.push(rows.join('\n'));
+      t.push('');
+    }
+  });
+  t.push('КАК ТЕБЕ РАБОТАТЬ СО МНОЙ');
+  t.push('— Учитывай мои обстоятельства: не предлагай того, на что у меня нет денег, времени или сил.');
+  t.push('— Держи в голове мою цель. Если я ухожу в сторону — скажи об этом прямо.');
+  t.push('— Отвечай в том стиле, который я описал выше.');
+  t.push('— Если чего-то обо мне не знаешь — спроси, а не придумывай.');
+  t.push('— Это описание — фон, а не тема разговора. Если вопрос простой и с моими обстоятельствами не связан — просто ответь на него.');
+  t.push('— Пиши по-русски и простыми словами. Термин — только если без него никак, и сразу расшифруй.');
+  t.push('');
+  t.push('Собрано: ' + today() + '. Если сейчас заметно позже — сначала спроси, что у меня изменилось, и только потом опирайся на цели и цифры.');
+  return t.join('\n');
+}
+
+/* ===== обновление интерфейса ===== */
+var prevFacts = 0;
+function update(){
+  var f = countFacts(), a = answered(), total = totalQ();
+  ['cnt','cnt2','mcnt'].forEach(function(id){ var el = $(id); if (el) el.textContent = f; });
+
+  var lbl = $('cntLbl');
+  if (lbl) lbl.textContent = f === 0 ? 'фактов о тебе пока нет'
+        : 'фактов о тебе теперь знает нейросеть';
+
+  var bar = $('bar');
+  if (bar) bar.style.width = Math.round(a / total * 100) + '%';
+
+  if (f > prevFacts){
+    ['cnt','cnt2','mcnt'].forEach(function(id){
+      var el = $(id); if(!el) return;
+      el.classList.add('pop');
+      setTimeout(function(){ el.classList.remove('pop'); }, 170);
+    });
+  }
+  prevFacts = f;
+
+  var txt = buildForAI();
+  ['ptext','ptext2'].forEach(function(id){
+    var el = $(id); if(!el) return;
+    if (txt){ el.textContent = txt; el.classList.remove('empty'); }
+    else { el.textContent = 'Начни отвечать — паспорт будет собираться здесь сам.'; el.classList.add('empty'); }
+  });
+}
+
+/* ===== копирование ===== */
+function toast(msg){
+  var t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._tm);
+  t._tm = setTimeout(function(){ t.classList.remove('show'); }, 1900);
+}
+
+function copy(text, btn, okMsg){
+  if (!text){ toast('Сначала ответь хотя бы на один вопрос'); return; }
+  var done = function(){
+    toast(okMsg || 'Скопировано ✓');
+    if (btn){
+      var old = btn.textContent;
+      btn.textContent = 'Скопировано ✓';
+      btn.classList.add('ok');
+      setTimeout(function(){ btn.textContent = old; btn.classList.remove('ok'); }, 1700);
+    }
+  };
+  if (navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(text).then(done, function(){ fallback(text, done); });
+  } else { fallback(text, done); }
+}
+
+function fallback(text, done){
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0';
+  document.body.appendChild(ta);
+  ta.focus(); ta.select();
+  try { document.execCommand('copy'); done(); }
+  catch(e){ toast('Не вышло скопировать — выдели текст вручную'); }
+  document.body.removeChild(ta);
+}
+
+/* ===== кнопки ===== */
+function bind(id, fn){ var el = $(id); if (el) el.addEventListener('click', fn); }
+
+bind('copyMain',  function(){ copy(buildForAI(), this, 'Готово — вставляй в нейросеть'); });
+bind('copyMain2', function(){ copy(buildForAI(), this, 'Готово — вставляй в нейросеть'); });
+bind('copyPass',  function(){ copy(buildPassport(), this, 'Паспорт скопирован'); });
+bind('copyPass2', function(){ copy(buildPassport(), this, 'Паспорт скопирован'); });
+bind('copyTest',  function(){ copy($('testQ').textContent.trim(), this, 'Вопрос скопирован'); });
+
+function doBackup(){
+  var txt = buildForAI();
+  if (!txt){ toast('Пока нечего сохранять'); return; }
+  var d = new Date();
+  var stamp = d.getFullYear() + '-' + ('0'+(d.getMonth()+1)).slice(-2) + '-' + ('0'+d.getDate()).slice(-2);
+  var body = txt + '\n\n\n--- ТЕХНИЧЕСКАЯ КОПИЯ (для переноса в другие инструменты) ---\n\n' + buildPassport();
+  var blob = new Blob([body], {type:'text/plain;charset=utf-8'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'moya-konstituciya-' + stamp + '.txt';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1500);
+  toast('Файл сохранён');
+}
+bind('backup',  doBackup);
+bind('backup2', doBackup);
+
+bind('wipe', function(){
+  if (!confirm('Стереть все ответы? Отменить не получится.\n\nСовет: сначала нажми «Резервная копия».')) return;
+  data = {};
+  try { localStorage.removeItem(STORE); } catch(e){}
+  BLOCKS.forEach(function(b){ b.qs.forEach(function(item){
+    var ta = $('i_' + item.k);
+    if (ta){ ta.value = ''; grow(ta); }
+    var q = $('q_' + item.k); if (q) q.classList.remove('filled');
+  });});
+  prevFacts = 0;
+  update();
+  toast('Всё стёрто');
+  window.scrollTo({top:0, behavior:'smooth'});
+});
+
+/* ===== шторка на телефоне ===== */
+bind('mopen',      function(){ $('sheet').classList.add('open'); });
+bind('closeSheet', function(){ $('sheet').classList.remove('open'); });
+$('sheet').addEventListener('click', function(e){ if (e.target === this) this.classList.remove('open'); });
+
+/* ===== ссылка на канал ===== */
+(function(){
+  var a = $('tgLink');
+  if (a){ a.textContent = TG_NAME; a.href = TG_URL; }
+})();
+
+update();
+})();
+</script>
+</body>
+</html>
