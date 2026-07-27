@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0d1117">
+<meta name="description" content="Наговори — локальная диктовка для Windows. Нажал F9, сказал — текст появился в любой программе. Без интернета, без подписок, бесплатно.">
+<meta property="og:title" content="Наговори — говоришь, а текст сам печатается">
+<meta property="og:description" content="Бесплатная диктовка для Windows. Работает без интернета: голос не покидает твой компьютер.">
+<title>Наговори — локальная диктовка для Windows</title>
+<style>
+  :root{
+    --bg:#0d1117; --card:#1c2128; --card2:#22272e;
+    --border:#30363d; --text:#e6edf3; --muted:#8b949e;
+    --accent:#d97757; --accent2:#58a6ff; --green:#3fb950; --gold:#f5b83d; --red:#f85149;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;line-height:1.65;font-size:16px}
+  .wrap{max-width:780px;margin:0 auto;padding:22px 18px 70px}
+
+  .back{display:inline-block;color:var(--muted);text-decoration:none;font-size:14px;margin-bottom:20px}
+  .back:hover{color:var(--accent)}
+
+  header{padding:8px 0 24px;text-align:center}
+  .num{display:inline-block;background:var(--accent);color:#fff;border-radius:8px;padding:2px 12px;font-size:13px;font-weight:800;margin-bottom:16px}
+  h1{font-size:31px;line-height:1.2;margin-bottom:14px;letter-spacing:-.5px}
+  h1 em{color:var(--accent);font-style:normal}
+  .lead{color:var(--muted);font-size:16.5px;max-width:580px;margin:0 auto}
+
+  .keys{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:26px 0}
+  .key{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:15px 17px}
+  .key b{display:block;font-size:15px;margin-bottom:3px}
+  .key kbd{display:inline-block;background:var(--card2);border:1px solid var(--border);border-bottom-width:2px;border-radius:6px;padding:2px 9px;font-family:inherit;font-size:13.5px;font-weight:700;color:var(--accent);margin-bottom:7px}
+  .key span{font-size:13.5px;color:var(--muted)}
+
+  .dl{display:block;background:var(--accent);color:#fff;text-align:center;border-radius:14px;padding:19px;font-size:18px;font-weight:800;text-decoration:none;margin:26px 0 10px;letter-spacing:-.2px}
+  .dl:active{transform:scale(.99)}
+  .dl span{display:block;font-size:13.5px;font-weight:500;opacity:.92;margin-top:4px;letter-spacing:0}
+  .dl-note{text-align:center;color:var(--muted);font-size:13.5px;margin-bottom:26px}
+
+  h2{font-size:20px;margin:38px 0 12px;display:flex;align-items:center;gap:9px}
+  h3{font-size:16px;margin:22px 0 8px;color:var(--accent2)}
+  p{margin-bottom:12px;font-size:15.5px}
+
+  .steps{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:17px 20px;margin:14px 0}
+  .steps ol{margin:0 0 0 19px;font-size:15px}
+  .steps ol li{padding:5px 0}
+  .steps ol li b{color:var(--text)}
+
+  .feat{list-style:none;padding:0;margin:12px 0}
+  .feat li{padding:9px 0 9px 30px;position:relative;font-size:15px;border-bottom:1px solid rgba(48,54,61,.5)}
+  .feat li:last-child{border-bottom:none}
+  .feat li:before{content:"✓";position:absolute;left:4px;color:var(--green);font-weight:800}
+  .feat li b{color:var(--text)}
+
+  .priv{background:rgba(63,185,80,.07);border:1px solid rgba(63,185,80,.3);border-radius:13px;padding:16px 19px;margin:18px 0;font-size:15px;color:var(--muted)}
+  .priv b{color:var(--green)}
+  .note{background:rgba(88,166,255,.07);border:1px solid rgba(88,166,255,.3);border-radius:13px;padding:15px 18px;margin:16px 0;font-size:14.5px;color:var(--muted)}
+  .note b{color:var(--accent2)}
+  .warn{background:rgba(245,184,61,.07);border:1px solid rgba(245,184,61,.35);border-radius:13px;padding:15px 18px;margin:16px 0;font-size:14.5px;color:var(--muted)}
+  .warn b{color:var(--gold)}
+
+  details{background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:9px;overflow:hidden}
+  details summary{cursor:pointer;padding:14px 17px;font-size:15.5px;font-weight:600;list-style:none;display:flex;align-items:center;gap:9px}
+  details summary::-webkit-details-marker{display:none}
+  details summary:before{content:"▸";color:var(--accent);flex-shrink:0;font-size:13px}
+  details[open] summary:before{content:"▾"}
+  details .body{padding:2px 17px 15px;font-size:14.5px;color:var(--muted);border-top:1px dashed rgba(48,54,61,.6)}
+  details .body code{background:var(--card2);border:1px solid var(--border);border-radius:5px;padding:1px 6px;font-size:13.5px}
+
+  .tg{display:block;background:var(--card);border:1px solid var(--accent);color:var(--accent);text-align:center;border-radius:13px;padding:15px;font-size:16px;font-weight:700;text-decoration:none;margin:26px 0 10px}
+
+  footer{margin-top:36px;padding-top:20px;border-top:1px solid var(--border);color:var(--muted);font-size:13px;text-align:center;line-height:1.7}
+  footer a{color:var(--accent);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<a class="back" href="../">← Вся библиотека</a>
+
+<header>
+  <div class="num">ИНСТРУМЕНТ 02</div>
+  <h1>Говоришь — а текст <em>сам печатается</em></h1>
+  <p class="lead">Нажал F9, сказал вслух — текст появился там, где стоит курсор. В письме, в переписке, в документе, в поисковой строке. Работает без интернета: твой голос не уходит никуда.</p>
+</header>
+
+<div class="keys">
+  <div class="key"><kbd>F9</kbd><b>Диктовка</b><span>Нажал — говоришь — нажал ещё раз. Текст вставился.</span></div>
+  <div class="key"><kbd>Shift + F9</kbd><b>Суфлёр</b><span>Живые субтитры на экране. Ничего не вставляет — для записи видео и созвонов.</span></div>
+  <div class="key"><kbd>Esc</kbd><b>Отмена</b><span>Передумал — ничего не вставится.</span></div>
+  <div class="key"><kbd>Ctrl + Alt + F9</kbd><b>Выключить</b><span>Программа закроется полностью.</span></div>
+</div>
+
+<a class="dl" href="https://github.com/Aleksey9898981/nagovori/releases/download/v1.0/Nagovori-v1.0.zip">
+  Скачать для Windows
+  <span>667 МБ · распаковал и пользуешься · ставить ничего не надо</span>
+</a>
+<p class="dl-note">Windows 10 или 11 · бесплатно · без регистрации</p>
+
+<div class="steps">
+  <h3 style="margin-top:0">Что делать после скачивания</h3>
+  <ol>
+    <li><b>Распакуй архив</b> в любую папку — например, на рабочий стол.</li>
+    <li><b>Запусти файл НАГОВОРИ.bat</b> двойным кликом. Windows может спросить разрешение — согласись.</li>
+    <li><b>Подожди 15 секунд.</b> Внизу экрана мигнёт зелёное «ГОТОВО» — программа работает и ждёт.</li>
+    <li><b>Открой любое поле для текста и нажми F9.</b> Говори. Нажми F9 ещё раз — текст на месте.</li>
+  </ol>
+</div>
+
+<h2>Что умеет</h2>
+<ul class="feat">
+  <li><b>Показывает текст, пока ты говоришь.</b> Внизу экрана видно, что распознаётся — ещё до того, как ты закончил.</li>
+  <li><b>Работает в любой программе.</b> Браузер, Word, Телеграм, 1С — куда поставил курсор, туда и вставит.</li>
+  <li><b>Знает твои слова.</b> Впиши в настройки имена, фамилии, названия — и программа перестанет их коверкать.</li>
+  <li><b>Понимает команды голосом.</b> Скажи «с новой строки» или «абзац» — текст перенесётся.</li>
+  <li><b>Помнит всё, что ты надиктовал.</b> Файл история.txt с датами. Можно отключить.</li>
+  <li><b>Русский и английский.</b> Или автоопределение — говори на любом.</li>
+  <li><b>Режим суфлёра</b> — субтитры на экране для записи роликов, стримов и созвонов.</li>
+</ul>
+
+<div class="priv">
+  <b>Про голос — честно.</b> У программы нет сервера. Звук записывается только пока горит «СЛУШАЮ», распознаётся прямо на твоём компьютере и нигде не сохраняется. После скачивания интернет ей вообще не нужен — можешь проверить, отключив вайфай. Не веришь на слово — <a href="https://github.com/Aleksey9898981/nagovori" style="color:var(--green)">весь код открыт</a>, смотри сам.
+</div>
+
+<h2>Вопросы</h2>
+
+<details><summary>Почему архив такой большой — 667 МБ?</summary><div class="body">
+Внутри уже лежит всё, что нужно: программа распознавания речи и две языковые модели. Именно поэтому после скачивания интернет не нужен и ничего не надо устанавливать. Большинство похожих программ качают это при первом запуске — и часто спотыкаются.
+</div></details>
+
+<details><summary>Чем это лучше диктовки, которая уже есть в Windows?</summary><div class="body">
+Встроенная диктовка (Win+H) отправляет твой голос в интернет и работает только пока есть связь. «Наговори» распознаёт на твоём компьютере — быстрее с длинными фразами, без интернета и без передачи голоса куда-либо. И у неё есть свой словарь: имена и термины, которые встроенная коверкает.
+</div></details>
+
+<details><summary>Живой текст внизу иногда ошибается — это нормально?</summary><div class="body">
+Да. Пока ты говоришь, работает быстрая модель — это черновик, чтобы ты видел процесс. Когда нажимаешь F9 второй раз, запись распознаётся заново качественной моделью, и вставляется уже точный текст.
+</div></details>
+
+<details><summary>Как поменять клавиши или добавить свои слова?</summary><div class="body">
+В папке программы есть файл <code>настройки.json</code> — открой его Блокнотом. Там же меняются язык, клавиши и включается-выключается история. Свои слова вписываются в строку <code>"мой_словарь"</code> — например, фамилии коллег или названия из твоей работы.
+</div></details>
+
+<details><summary>Программа не слышит микрофон</summary><div class="body">
+Windows блокирует доступ по умолчанию. Открой: Параметры → Конфиденциальность и защита → Микрофон → включи «Разрешить классическим приложениям доступ к микрофону».
+</div></details>
+
+<details><summary>Как удалить?</summary><div class="body">
+Нажми Ctrl+Alt+F9 (или запусти ВЫКЛЮЧИТЬ.bat) и удали папку. Программа не прописывается в систему и ничего после себя не оставляет.
+</div></details>
+
+<div class="note"><b>Работает на слабых компьютерах.</b> Проверено на ноутбуке 2018 года с 8 ГБ памяти: минута речи распознаётся примерно за 30 секунд, живые субтитры идут почти мгновенно.</div>
+
+<a class="tg" href="https://t.me/batalovproai">Забрать все инструменты в Телеграме →</a>
+
+<footer>
+  Собрал <b>Алексей Баталов</b> с нейросетью. Я не программист.<br>
+  <a href="../">Библиотека инструментов</a> · <a href="https://t.me/batalovproai">@batalovproai</a> · <a href="https://github.com/Aleksey9898981/nagovori">Открытый код</a><br>
+  Наговори v1.0 · 27.07.2026
+</footer>
+
+</div>
+</body>
+</html>
